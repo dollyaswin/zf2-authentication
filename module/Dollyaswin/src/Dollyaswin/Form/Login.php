@@ -40,7 +40,12 @@ class Login extends Form
         				array('name' => 'StringTrim'),
         			),
         		'validators' => array(
-        				array('name' => 'EmailAddress')
+        				array(
+        				      'name' => 'StringLength',
+        					  'options' => array(
+        							'min' => 8
+        						)
+        				)
         			)
         	)));
          $inputFilter->add($factory->createInput(array(
@@ -50,7 +55,7 @@ class Login extends Form
         				array(
         					'name' => 'StringLength',
         					'options' => array(
-        							'min' => 8
+        							'min' => 5
         						)
         				)
         			)

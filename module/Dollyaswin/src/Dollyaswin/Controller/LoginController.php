@@ -17,13 +17,34 @@ class LoginController extends AbstractActionController
 {
     public function loginAction()
     {
-    	$loginForm = new Login;
+    	$form = new Login;
     	if ($this->getRequest()->isPost()) {
+    		$form->setData($this->getRequest()->getPost());
+    		if (! $form->isValid()) {
+    			// not valid form
+    			return new ViewModel(array(
+    								'title' => 'Log In',
+    								'form'  => $form,
+    								));
+    		}
     		
+    		$loginData = $form->getData();
+			$authService = $this->serviceLocator->get('auth_service');
+			$authService->getAdapter()
+			            ->setIdentity($loginData['username'])
+			            ->setCredential($loginData['password']);
+			// do authentication
+    		$result = $authService->authenticate();
+    		if ($result->isValid()) {
+    			$this->redirect()->toUrl('/main');
+    		} else {
+    			$loginMsg = $result->getMessages();
+    		}
     	}
     	
         return new ViewModel(array('title' => 'Log In',
-                                     'form'  => $loginForm,
+                                     'form'  => $form,
+        							 'loginMsg' => $loginMsg
                                      ));
     }
 }
