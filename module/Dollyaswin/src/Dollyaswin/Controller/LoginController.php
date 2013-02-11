@@ -47,4 +47,16 @@ class LoginController extends AbstractActionController
         							 'loginMsg' => $loginMsg
                                      ));
     }
+    
+    public function logoutAction()
+    {
+    	$authService = $this->serviceLocator->get('auth_service');
+    	if ($authService->hasIdentity()) {
+    		// if not log in, redirect to login page
+    		return $this->redirect()->toUrl('/login');
+    	}
+    	
+    	$authService->clearIdentity();
+    	return $this->redirect()->toUrl('/main');
+    }
 }
