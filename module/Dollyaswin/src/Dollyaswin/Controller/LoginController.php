@@ -9,13 +9,21 @@
 
 namespace Dollyaswin\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
+use Zend\Mvc\Controller\AbstractActionController,
+    Zend\View\Model\ViewModel,
+    Dollyaswin\Form\Login;
 
 class LoginController extends AbstractActionController
 {
     public function loginAction()
     {
-        return new ViewModel();
+    	$loginForm = new Login;
+    	if ($this->getRequest()->isPost()) {
+    		
+    	}
+    	
+        return new ViewModel(array('title' => 'Log In',
+                                     'form'  => $loginForm,
+                                     ));
     }
 }

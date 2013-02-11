@@ -1,1 +1,32 @@
-Testing saja
+<?php
+$this->headTitle($title);
+$form = $this->form;
+$form->prepare();
+$form->get('username')->setAttribute('class', 'textbox');
+$form->get('password')->setAttribute('class', 'textbox');
+$form->get('submit')->setAttribute('class', 'button');
+?>
+           
+<?php echo $this->form()->openTag($form); ?>
+<div class="label">
+	EMAIL<span class="red">*</span>
+</div>
+<div class="textbox-div">
+	<?php echo $this->formText($form->get('username')); ?>
+</div>
+<div class="label">
+	PASSWORD<span class="red">*</span>
+</div>
+<div class="textbox-div">
+	<?php echo $this->formPassword($form->get('password')); ?>
+</div>
+<div class="textbox-div">
+	<?php echo $this->formElement($form->get('csrf')) ?>
+    <?php echo $this->formSubmit($form->get('submit')); ?>
+</div>
+<?php echo $this->form()->closeTag(); ?>
+<br />
+<?php if (isset($loginMsg[0])): ?>
+	<span class="red"><?php echo $loginMsg[0]; ?></span><br />
+<?php endif ?>
+           
