@@ -12,13 +12,11 @@
  */
 
 return array(
-    // Whether or not to enable a configuration cache.
-    // If enabled, the merged configuration will be cached and used in
-    // subsequent requests.
-    //'config_cache_enabled' => false,
-    // The key used to create the configuration cache file name.
-    //'config_cache_key' => 'module_config_cache',
-    // The path in which to cache merged configuration.
-    //'cache_dir' =>  './data/cache',
-    // ...
+        'db' => array(
+                      'driver' => 'Pdo',
+                      'dsn'    => 'mysql:dbname=test;host=localhost',
+                      'username' => 'test',
+                      'password' => '12345',
+                      'driver_options' => array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''),
+                ),
 );
