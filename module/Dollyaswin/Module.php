@@ -35,6 +35,11 @@ class Module
 					$authService->setAdapter($authAdapter)
     							->setStorage(new SessionStorage('auth'));
     				return $authService;
+    			},
+    			'twitter_oauth' => function ($sm) {
+    				$config = $sm->get('Config');
+    				$consumer = new \ZendOAuth\Consumer($config['twitter']);
+    				return $consumer;
     			}
     		)
     	);

@@ -41,6 +41,29 @@ return array(
                     ),
                 ),
             ),
+            // @TODO route for twitter
+            'twittersignin' => array(
+                'type'    => 'Literal',
+                'options' => array(
+                    'route'    => '/twittersignin',
+                    'defaults' => array(
+                        '__NAMESPACE__' => 'Dollyaswin\Controller',
+                        'controller'    => 'Login',
+                        'action'        => 'twitter',
+                    ),
+                ),
+            ),
+            'twittercallback' => array(
+                'type'    => 'Literal',
+                'options' => array(
+                    'route'    => '/twittercallback',
+                    'defaults' => array(
+                        '__NAMESPACE__' => 'Dollyaswin\Controller',
+                        'controller'    => 'Login',
+                        'action'        => 'twitterCallback',
+                    ),
+                ),
+            ),
             'logout' => array(
                 'type'    => 'Literal',
                 'options' => array(

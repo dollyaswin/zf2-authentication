@@ -10,6 +10,7 @@
 namespace Dollyaswin\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController,
+    Zend\Session\Container as SessionContainer,
     Zend\View\Model\ViewModel,
     Dollyaswin\Form\Login;
 
@@ -64,5 +65,27 @@ class LoginController extends AbstractActionController
     	
     	$authService->clearIdentity();
     	return $this->redirect()->toUrl('/main');
+    }
+    
+    public function twitterAction()
+    {
+		$consumer = $this->serviceLocator->get('twitter_oauth');
+        $token = $consumer->getRequestToken();
+        $session = new SessionContainer('twitter_oauth');
+        $session->requestToken = serialize($token);
+        // redirect the user to twitter authorize page
+        $consumer->redirect();
+    }
+    
+    public function twitterCallbackAction()
+    {
+    	$consumer = $this->serviceLocator->get('twitter_oauth');
+    	$session = new SessionContainer('twitter_oauth');
+    	$token = $consumer->getAccessToken(
+    				$this->params()->fromQuery(),
+    				unserialize($session->requestToken)
+             	);
+        print_r($token);
+       	exit;
     }
 }
