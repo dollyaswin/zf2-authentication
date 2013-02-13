@@ -17,6 +17,12 @@ class LoginController extends AbstractActionController
 {
     public function loginAction()
     {
+    	$authService = $this->serviceLocator->get('auth_service');
+    	if ($authService->hasIdentity()) {
+    		// if not log in, redirect to login page
+    		return $this->redirect()->toUrl('/main');
+    	}
+    	
     	$form = new Login;
     	if ($this->getRequest()->isPost()) {
     		$form->setData($this->getRequest()->getPost());
@@ -51,7 +57,7 @@ class LoginController extends AbstractActionController
     public function logoutAction()
     {
     	$authService = $this->serviceLocator->get('auth_service');
-    	if ($authService->hasIdentity()) {
+    	if (! $authService->hasIdentity()) {
     		// if not log in, redirect to login page
     		return $this->redirect()->toUrl('/login');
     	}
