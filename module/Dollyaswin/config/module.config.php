@@ -40,40 +40,18 @@ return array(
                         'action'        => 'login',
                     ),
                 ),
-            ),
-            // @TODO route for twitter
-            'twittersignin' => array(
-                'type'    => 'Literal',
-                'options' => array(
-                    'route'    => '/twittersignin',
-                    'defaults' => array(
-                        '__NAMESPACE__' => 'Dollyaswin\Controller',
-                        'controller'    => 'Login',
-                        'action'        => 'twitter',
-                    ),
-                ),
-            ),
-            'twittercallback' => array(
-                'type'    => 'Literal',
-                'options' => array(
-                    'route'    => '/twittercallback',
-                    'defaults' => array(
-                        '__NAMESPACE__' => 'Dollyaswin\Controller',
-                        'controller'    => 'Login',
-                        'action'        => 'twitterCallback',
-                    ),
-                ),
-            ),
-            'logout' => array(
-                'type'    => 'Literal',
-                'options' => array(
-                    'route'    => '/logout',
-                    'defaults' => array(
-                        '__NAMESPACE__' => 'Dollyaswin\Controller',
-                        'controller'    => 'Login',
-                        'action'        => 'logout',
-                    ),
-                ),
+                'may_terminate' => true,
+				'child_routes' => array(
+					'default' => array(
+						'type'    => 'Segment',
+						'options' => array(
+							'route'    => '[/:action]',
+							'constraints' => array(
+								'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
+							)
+						)
+					)
+				)
             ),
         ),
     ),
