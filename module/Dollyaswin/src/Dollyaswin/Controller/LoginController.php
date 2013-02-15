@@ -30,8 +30,8 @@ class LoginController extends AbstractActionController
     		if (! $form->isValid()) {
     			// not valid form
     			return new ViewModel(array(
-    								'title' => 'Log In',
-    								'form'  => $form,
+    									'title' => 'Log In',
+    									'form'  => $form
     								));
     		}
     		
@@ -64,7 +64,13 @@ class LoginController extends AbstractActionController
     	}
     	
     	$authService->clearIdentity();
-    	return $this->redirect()->toUrl('/main');
+    	$form = new Login();
+    	$viewModel = new ViewModel(array('loginMsg' => array('You have been logged out'),
+    									  'form'  => $form,
+    									  'title' => 'Log out'
+    									));
+    	$viewModel->setTemplate('dollyaswin/login/login.phtml');
+    	return $viewModel;
     }
     
     public function twitterAction()
@@ -85,7 +91,9 @@ class LoginController extends AbstractActionController
     				$this->params()->fromQuery(),
     				unserialize($session->requestToken)
              	);
-        print_r($token);
+        $session->accessToken = serialize($token);
+        var_dump($token->getParam('user_id'));
+        var_dump($token->getParam('screen_name'));
        	exit;
     }
 }

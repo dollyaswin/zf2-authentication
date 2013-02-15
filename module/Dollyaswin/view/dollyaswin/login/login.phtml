@@ -2,6 +2,7 @@
 $this->headTitle($title);
 $form = $this->form;
 $form->prepare();
+$form->setAttribute('action', '/login');
 $form->get('username')->setAttribute('class', 'textbox');
 $form->get('password')->setAttribute('class', 'textbox');
 $form->get('submit')->setAttribute('class', 'button');
