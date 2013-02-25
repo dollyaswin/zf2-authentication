@@ -10,9 +10,11 @@
 namespace Dollyaswin\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController,
+    Zend\Authentication\Adapter\DbTable,
     Zend\Session\Container as SessionContainer,
     Zend\View\Model\ViewModel,
-    Dollyaswin\Form\Login;
+    Dollyaswin\Form\Login,
+    Dollyaswin\Auth\Adapter\Twitter as AuthTwitter;
 
 class LoginController extends AbstractActionController
 {
@@ -25,6 +27,7 @@ class LoginController extends AbstractActionController
     	}
     	
     	$form = new Login;
+    	$loginMsg = array();
     	if ($this->getRequest()->isPost()) {
     		$form->setData($this->getRequest()->getPost());
     		if (! $form->isValid()) {
@@ -35,15 +38,16 @@ class LoginController extends AbstractActionController
     								));
     		}
     		
+    		$dbAdapter = $this->serviceLocator->get('Zend\Db\Adapter\Adapter');
     		$loginData = $form->getData();
-			$authService = $this->serviceLocator->get('auth_service');
-			$authService->getAdapter()
-			            ->setIdentity($loginData['username'])
+    		$authAdapter = new DbTable($dbAdapter, 'user', 'username', 'password', 'MD5(?)');
+    		$authAdapter->setIdentity($loginData['username'])
 			            ->setCredential($loginData['password']);
-			// do authentication
+			$authService = $this->serviceLocator->get('auth_service');
+			$authService->setAdapter($authAdapter);
     		$result = $authService->authenticate();
     		if ($result->isValid()) {
-    			$this->redirect()->toUrl('/main');
+    			return $this->redirect()->toUrl('/main');
     		} else {
     			$loginMsg = $result->getMessages();
     		}
@@ -76,24 +80,36 @@ class LoginController extends AbstractActionController
     public function twitterAction()
     {
 		$consumer = $this->serviceLocator->get('twitter_oauth');
-        $token = $consumer->getRequestToken();
+        $token   = $consumer->getRequestToken();
         $session = new SessionContainer('twitter_oauth');
         $session->requestToken = serialize($token);
-        // redirect the user to twitter authorize page
         $consumer->redirect();
     }
     
     public function twitterCallbackAction()
     {
+    	$session  = new SessionContainer('twitter_oauth');
     	$consumer = $this->serviceLocator->get('twitter_oauth');
-    	$session = new SessionContainer('twitter_oauth');
-    	$token = $consumer->getAccessToken(
-    				$this->params()->fromQuery(),
-    				unserialize($session->requestToken)
-             	);
-        $session->accessToken = serialize($token);
-        var_dump($token->getParam('user_id'));
-        var_dump($token->getParam('screen_name'));
-       	exit;
+    	try {
+    		// get access token
+    		$token = $consumer->getAccessToken($this->params()->fromQuery(),
+    	    	                               unserialize($session->requestToken));
+    	    $authService = $this->serviceLocator->get('auth_service');
+    	    // @TODO find user based on twitter screen_name
+    	    // get session storage
+    	    $storage = $authService->getStorage();
+    	    // write to session storage
+    	    $storage->write($token->getParam('screen_name'));
+		    return $this->redirect()->toUrl('/main');
+    	} catch (\ZendOauth\Exception\InvalidArgumentException $e) {
+    		// if there is error when get access token
+    		$form = new Login();
+    		$viewModel = new ViewModel(array('loginMsg' => array($e->getMessage()),
+    										  'form'  => $form,
+    										  'title' => 'Twitter Sign In'
+    										));
+    		$viewModel->setTemplate('dollyaswin/login/login.phtml');
+    		return $viewModel;
+    	}
     }
 }

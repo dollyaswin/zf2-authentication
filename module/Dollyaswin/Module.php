@@ -2,8 +2,9 @@
 namespace Dollyaswin;
 
 use Zend\Authentication\AuthenticationService,
-    Zend\Authentication\Adapter\DbTable,
-    Zend\Authentication\Storage\Session as SessionStorage;
+    Zend\Authentication\Storage\Session as SessionStorage,
+    Zend\Http\Client as HTTPClient,
+    ZendOAuth\OAuth;
 
 class Module
 {
@@ -28,15 +29,17 @@ class Module
     	return array(
     		'factories' => array(
     			'auth_service' => function ($sm) {
-    				$dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
-    				$authService = new AuthenticationService();
-    				// use DbTable adapter
-					$authAdapter = new DbTable($dbAdapter, 'user', 'username', 'password', 'MD5(?)');
-					$authService->setAdapter($authAdapter)
-    							->setStorage(new SessionStorage('auth'));
+    				$authService = new AuthenticationService(new SessionStorage('auth'));
+//    				$authService->setStorage(new SessionStorage('auth'));
     				return $authService;
     			},
     			'twitter_oauth' => function ($sm) {
+    			    $httpConfig = array(
+    			                         'adapter' => 'Zend\Http\Client\Adapter\Socket',
+    			                         'sslverifypeer' => false
+    			                     );
+    			    $httpClient = new HTTPClient(null, $httpConfig);
+    			    OAuth::setHttpClient($httpClient);
     				$config = $sm->get('Config');
     				$consumer = new \ZendOAuth\Consumer($config['twitter']);
     				return $consumer;
