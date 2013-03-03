@@ -3,8 +3,12 @@ namespace Dollyaswin;
 
 use Zend\Authentication\AuthenticationService,
     Zend\Authentication\Storage\Session as SessionStorage,
+    Zend\Db\ResultSet\ResultSet,
+    Zend\Db\TableGateway\TableGateway,
     Zend\Http\Client as HTTPClient,
-    ZendOAuth\OAuth;
+    ZendOAuth\OAuth,
+    Dollyaswin\Model\User,
+    Dollyaswin\Model\UserTable;
 
 class Module
 {
@@ -43,7 +47,18 @@ class Module
     				$config = $sm->get('Config');
     				$consumer = new \ZendOAuth\Consumer($config['twitter']);
     				return $consumer;
-    			}
+    			},
+    			'Dollyaswin\Model\UserTable' =>  function($sm) {
+                    $tableGateway = $sm->get('UserTableGateway');
+                    $table = new UserTable($tableGateway);
+                    return $table;
+                },
+                'UserTableGateway' => function ($sm) {
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new User());
+                    return new TableGateway('user', $dbAdapter, null, $resultSetPrototype);
+                },
     		)
     	);
     }
