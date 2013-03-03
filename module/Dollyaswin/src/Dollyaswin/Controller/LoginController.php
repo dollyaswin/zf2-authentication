@@ -96,10 +96,17 @@ class LoginController extends AbstractActionController
     	    	                               unserialize($session->requestToken));
     	    $authService = $this->serviceLocator->get('auth_service');
     	    // @TODO find user based on twitter screen_name
-    	    // get session storage
-    	    $storage = $authService->getStorage();
-    	    // write to session storage
-    	    $storage->write($token->getParam('screen_name'));
+            try {
+                $user = $this->getUserTable()
+                             ->getUserByTwitter($token->getParam('screen_name'));
+    	        // get session storage
+    	        $storage = $authService->getStorage();
+    	        // write to session storage
+    	        // $storage->write($token->getParam('screen_name'));
+    	        $storage->write($user->username);
+            } catch (\Exception $e) {
+            }
+
 		    return $this->redirect()->toUrl('/main');
     	} catch (\ZendOauth\Exception\InvalidArgumentException $e) {
     		// if there is error when get access token
@@ -111,5 +118,15 @@ class LoginController extends AbstractActionController
     		$viewModel->setTemplate('dollyaswin/login/login.phtml');
     		return $viewModel;
     	}
+    }
+
+	public function getUserTable()
+    {
+        if (!$this->userTable) {
+            $sm = $this->getServiceLocator();
+            $this->userTable = $sm->get('Dollyaswin\Model\UserTable');
+        }
+        
+        return $this->userTable;
     }
 }
