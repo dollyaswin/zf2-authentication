@@ -13,6 +13,7 @@ use Zend\Mvc\Controller\AbstractActionController,
     Zend\Authentication\Adapter\DbTable,
     Zend\Session\Container as SessionContainer,
     Zend\View\Model\ViewModel,
+    Dollyaswin\Model\User,
     Dollyaswin\Form\Login,
     Dollyaswin\Auth\Adapter\Twitter as AuthTwitter;
 
@@ -94,19 +95,28 @@ class LoginController extends AbstractActionController
     		// get access token
     		$token = $consumer->getAccessToken($this->params()->fromQuery(),
     	    	                               unserialize($session->requestToken));
-    	    $authService = $this->serviceLocator->get('auth_service');
-    	    // @TODO find user based on twitter screen_name
+            $userTable = $this->getUserTable();
             try {
-                $user = $this->getUserTable()
-                             ->getUserByTwitter($token->getParam('screen_name'));
-    	        // get session storage
-    	        $storage = $authService->getStorage();
-    	        // write to session storage
-    	        // $storage->write($token->getParam('screen_name'));
-    	        $storage->write($user->username);
+                // get user by twitter username
+                $userTable->getUserByTwitter($token->getParam('screen_name'));
+                $userId = $userTable->id;
             } catch (\Exception $e) {
+                // create new user with empty username & password
+                $data = array('username' => '',
+                              'password' => '',
+                              'twitter'  => $token->getParam('screen_name') 
+                             );
+                $user = new User();
+                $user->exchangeArray($data);
+                $userTable->saveUser($user);
+                $userId = $userTable->getLastInsertUserId();
             }
 
+    	    $authService = $this->serviceLocator->get('auth_service');
+    	    // get session storage
+    	    $storage = $authService->getStorage();
+    	    // write to session storage
+    	    $storage->write($userId);
 		    return $this->redirect()->toUrl('/main');
     	} catch (\ZendOauth\Exception\InvalidArgumentException $e) {
     		// if there is error when get access token

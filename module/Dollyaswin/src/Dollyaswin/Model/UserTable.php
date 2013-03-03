@@ -28,6 +28,11 @@ class UserTable
     	$resultSet = $this->tableGateway->selectWith($select);
     	return $resultSet;
     }
+
+    public function getLastInsertUserId()
+    {
+        return $this->tableGateway->getLastInsertValue();
+    }
     
     public function getUser($id)
     {
