@@ -48,6 +48,10 @@ class LoginController extends AbstractActionController
 			$authService->setAdapter($authAdapter);
     		$result = $authService->authenticate();
     		if ($result->isValid()) {
+                // set id as identifier in session
+                $userId = $authAdapter->getResultRowObject('id')->id;
+                $authService->getStorage()
+                            ->write($userId);
     			return $this->redirect()->toUrl('/main');
     		} else {
     			$loginMsg = $result->getMessages();
