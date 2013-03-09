@@ -19,6 +19,16 @@ return array(
         'password' => '12345',
         'driver_options' => array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''),
 	),
+	'twitter' => array(
+		'consumerKey' => '0OdwfM85b8ZFVtRaSUIAg',
+		'consumerSecret' => 'WjPkNWTgadKqAL1Mf5iqpEInOc3jYRcE4eNOUxAlhA',
+		'callbackUrl' => 'http://local.zf2experiment.com/login/twittercallback',
+	    'siteUrl' => 'http://twitter.com/oauth',
+	    'requestTokenUrl' => 'https://api.twitter.com/oauth/request_token',
+	    'accessTokenUrl'  => 'https://api.twitter.com/oauth/access_token',
+	    'userAuthorizationUrl' => 'https://api.twitter.com/oauth/authenticate',
+//	    'userAuthorizationUrl' => 'https://api.twitter.com/oauth/authorize'
+	),
     'service_manager' => array(
         'factories' => array(
             'Zend\Db\Adapter\Adapter' => 'Zend\Db\Adapter\AdapterServiceFactory',
