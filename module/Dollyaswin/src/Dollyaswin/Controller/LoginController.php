@@ -102,8 +102,8 @@ class LoginController extends AbstractActionController
             $userTable = $this->getUserTable();
             try {
                 // get user by twitter username
-                $userTable->getUserByTwitter($token->getParam('screen_name'));
-                $userId = $userTable->id;
+                $user = $userTable->getUserByTwitter($token->getParam('screen_name'));
+                $userId = $user->id;
             } catch (\Exception $e) {
                 // create new user with empty username & password
                 $data = array('username' => '',
