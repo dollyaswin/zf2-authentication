@@ -1,0 +1,46 @@
+<?php
+$this->headTitle($title);
+$form = $this->form;
+$form->prepare();
+$form->setAttribute('action', '/login');
+$form->get('username')->setAttribute('class', 'textbox');
+$form->get('password')->setAttribute('class', 'textbox');
+$form->get('submit')->setAttribute('class', 'button');
+?>
+           
+<?php echo $this->form()->openTag($form); ?>
+<div class="label">
+	USERNAME<span class="red">*</span>
+</div>
+<div class="textbox-div">
+	<?php echo $this->formText($form->get('username')); ?>
+</div>
+<div class="label">
+	PASSWORD<span class="red">*</span>
+</div>
+<div class="textbox-div">
+	<?php echo $this->formPassword($form->get('password')); ?>
+</div>
+<div class="textbox-div">
+	<?php echo $this->formElement($form->get('csrf')) ?>
+    <?php echo $this->formSubmit($form->get('submit')); ?>
+</div>
+<div class="textbox-div">
+    <a class="tw-sign-in-button" href="/login/twitter"></a>
+    <a class="fb-sign-in-button" href="/login/facebook"></a>
+</div>
+<?php echo $this->form()->closeTag(); ?>
+<br />
+<?php if (isset($loginMsg[0])): ?>
+	<span class="red"><?php echo $loginMsg[0]; ?></span><br />
+<?php endif ?>
+
+<style type="text/css">
+  .fb-sign-in-button {
+  	background:transparent url(/images/sign-in-with-facebook-twitter-button.jpg) 0 0 no-repeat;vertical-align:middle;display:-moz-inline-stack;display:inline-block;zoom:1;width:190px;height:35px;*display:inline;*margin:10px 20px 0 20px;background-position:-170px -110px; 
+  }
+ .tw-sign-in-button {
+  	background:transparent url(/images/sign-in-with-facebook-twitter-button.jpg) 0 0 no-repeat;vertical-align:middle;display:-moz-inline-stack;display:inline-block;zoom:1;width:190px;height:35px;*display:inline;*margin:10px 20px 0 20px;background-position:-170px -157px; 
+  }
+}
+</style>
